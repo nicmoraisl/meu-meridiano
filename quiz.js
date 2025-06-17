@@ -1,64 +1,99 @@
 
-const quizData = [
-  {
-    question: "Qual o trajeto principal do meridiano do estômago?",
-    options: ["Frontal do corpo", "Costas", "Braços", "Pernas"],
-    answer: "Frontal do corpo"
-  },
-  {
-    question: "Onde está localizado o ponto E36 (Zusanli)?",
-    options: ["Braço", "Perna", "Pescoço", "Tórax"],
-    answer: "Perna"
-  },
-  {
-    question: "Qual é a função do ponto E25 (Tianshu)?",
-    options: ["Aliviar dor de cabeça", "Regular intestinos", "Melhorar visão", "Fortalecer braços"],
-    answer: "Regular intestinos"
-  },
-  {
-    question: "Qual ponto é conhecido como 'Porta do Estômago'?",
-    options: ["E21", "E36", "E40", "E25"],
-    answer: "E21"
-  },
-  {
-    question: "O meridiano do estômago começa em qual região?",
-    options: ["Mão", "Pé", "Olho", "Tórax"],
-    answer: "Olho"
-  }
+const perguntas = [
+    {
+        pergunta: "O meridiano do estômago pertence a qual elemento?",
+        opcoes: ["Terra", "Fogo", "Metal", "Água"],
+        respostaCorreta: 0,
+        imagem: "imagens/elemento-estomago.png"
+    },
+    {
+        pergunta: "Qual o trajeto inicial do meridiano do estômago?",
+        opcoes: ["Inicia na mão", "Inicia na cabeça", "Inicia no abdômen", "Inicia no pé"],
+        respostaCorreta: 1,
+        imagem: "imagens/trajeto-inicial.png"
+    },
+    {
+        pergunta: "Qual ponto do meridiano do estômago é conhecido por tonificar Qi e sangue?",
+        opcoes: ["E36 (Zusanli)", "E25 (Tianshu)", "E1 (Chengqi)", "E40 (Fenglong)"],
+        respostaCorreta: 0,
+        imagem: "imagens/ponto-E36.png"
+    },
+    {
+        pergunta: "Qual ponto é indicado para eliminar fleuma no meridiano do estômago?",
+        opcoes: ["E40 (Fenglong)", "E21 (Liangmen)", "E45 (Lidui)", "E25 (Tianshu)"],
+        respostaCorreta: 0,
+        imagem: "imagens/ponto-E40.png"
+    },
+    {
+        pergunta: "Qual a função geral do meridiano do estômago?",
+        opcoes: ["Promover a circulação de sangue", "Regular a digestão", "Controlar os pulmões", "Harmonizar o fígado"],
+        respostaCorreta: 1,
+        imagem: "imagens/funcao-estomago.png"
+    },
+    {
+        pergunta: "Qual o horário de maior atividade energética no meridiano do estômago?",
+        opcoes: ["7h às 9h", "9h às 11h", "11h às 13h", "13h às 15h"],
+        respostaCorreta: 0,
+        imagem: "imagens/horario-estomago.png"
+    },
+    {
+        pergunta: "Qual emoção pode impactar o funcionamento do estômago segundo a Medicina Chinesa?",
+        opcoes: ["Tristeza", "Preocupação", "Medo", "Alegria"],
+        respostaCorreta: 1,
+        imagem: "imagens/emocao-estomago.png"
+    }
 ];
 
-let currentQuestion = 0;
-let score = 0;
+let perguntaAtual = 0;
+let pontos = 0;
 
-const quizContainer = document.getElementById('quiz-container');
-const resultContainer = document.getElementById('result');
+function mostrarPergunta() {
+    let p = perguntas[perguntaAtual];
+    document.getElementById("pergunta").textContent = p.pergunta;
 
-function loadQuestion() {
-  if (currentQuestion < quizData.length) {
-    const q = quizData[currentQuestion];
-    quizContainer.innerHTML = `<h3>${q.question}</h3>`;
-    q.options.forEach(option => {
-      const btn = document.createElement('button');
-      btn.textContent = option;
-      btn.onclick = () => checkAnswer(option);
-      quizContainer.appendChild(btn);
+    let opcoesDiv = document.getElementById("opcoes");
+    opcoesDiv.innerHTML = "";
+
+    p.opcoes.forEach((opcao, index) => {
+        let btn = document.createElement("button");
+        btn.textContent = opcao;
+        btn.onclick = () => escolherOpcao(index);
+        opcoesDiv.appendChild(btn);
     });
-  } else {
-    showResult();
-  }
+
+    let img = document.getElementById("imagemPergunta");
+    if (p.imagem) {
+        img.src = p.imagem;
+        img.style.display = "block";
+    } else {
+        img.style.display = "none";
+    }
 }
 
-function checkAnswer(selected) {
-  if (selected === quizData[currentQuestion].answer) {
-    score++;
-  }
-  currentQuestion++;
-  loadQuestion();
+function escolherOpcao(indice) {
+    let p = perguntas[perguntaAtual];
+    if (indice === p.respostaCorreta) {
+        pontos++;
+    }
+    perguntaAtual++;
+    if (perguntaAtual < perguntas.length) {
+        mostrarPergunta();
+    } else {
+        mostrarResultado();
+    }
 }
 
-function showResult() {
-  quizContainer.innerHTML = '';
-  resultContainer.innerHTML = `<h2>Você acertou ${score} de ${quizData.length} perguntas.</h2>`;
+function mostrarResultado() {
+    document.getElementById("quiz").innerHTML = `
+        <h2>Você acertou ${pontos} de ${perguntas.length} perguntas!</h2>
+        <button onclick="reiniciarQuiz()">Jogar novamente</button>
+    `;
 }
 
-loadQuestion();
+function reiniciarQuiz() {
+    perguntaAtual = 0;
+    pontos = 0;
+    mostrarPergunta();
+}
+
+window.onload = mostrarPergunta;
